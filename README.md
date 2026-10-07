@@ -126,6 +126,10 @@ All carry `.code` (stable string), `.message` and `.status`. Failed runs are ref
 | `TANVO_API_KEY` | API key (or `Client(api_key=...)`) |
 | `TANVO_BASE_URL` | Another deployment (default `https://tanvo.ai`) |
 
+## Documentation
+
+Full API reference (every endpoint, field, error and limit): [tanvo.ai/developers/api](https://tanvo.ai/developers/api?utm_source=github&utm_medium=referral). Machine-readable spec: [tanvo.ai/openapi.yaml](https://tanvo.ai/openapi.yaml).
+
 ## Also from Tanvo
 
 - [tanvo-mcp](https://github.com/tanvoai/tanvo-mcp): the same apps and models inside Claude, Cursor and other MCP clients.
