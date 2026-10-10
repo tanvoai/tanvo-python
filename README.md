@@ -75,6 +75,9 @@ client.download(clip, "out/")
 
 # Image to video, with an optional end frame on models that support it
 client.generate_video("the cat turns its head and blinks", model="seedance-2-5", image="cat.jpg", wait=True)
+
+# Veo 3.1 has quality tiers: "Lite", "Fast" or "Quality"
+client.generate_video("a paper boat in a gutter stream after rain", model="veo-3-1", tier="Quality", duration=8)
 ```
 
 ## Songs

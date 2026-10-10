@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tanvo"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python client for Tanvo: AI images, video and songs on Nano Banana, Seedream, GPT Image, Veo, Kling, Seedance and Suno, plus 80 ready-made photo apps. No dependencies; the house image engine works without an API key."
 readme = "README.md"
 license = "MIT"

@@ -203,6 +203,13 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(g.status, "PROCESSING")
         self.assertTrue(c.wait(g.id, timeout=60).succeeded)
 
+    def test_video_tier_goes_in_the_options(self):
+        c = self.client("sk_good")
+        c.generate_video("a lighthouse", tier="Quality", duration=8)
+        body = json.loads([r for r in FAKE.requests if r[0] == "POST" and r[1].endswith("/generations")][-1][3])
+        self.assertEqual(body["options"]["tier"], "Quality")
+        self.assertEqual(body["options"]["duration"], 8)
+
     def test_wait_timeout_returns_last_state(self):
         c = self.client("sk_good")
         FAKE.polls_until_done = 10_000

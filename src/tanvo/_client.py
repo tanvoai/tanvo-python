@@ -15,7 +15,7 @@ from ._errors import ServiceError, TanvoError, error_for
 from ._types import Account, App, Generation, Model
 from ._webhook import verify_webhook
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 DEFAULT_BASE_URL = "https://tanvo.ai"
 ImageInput = Union[str, os.PathLike, bytes]
@@ -150,13 +150,14 @@ class Client:
 
     def generate_video(
         self, prompt: str, *, model: str = "studio-video-v1", aspect: Optional[str] = None, resolution: Optional[str] = None, duration: Optional[int] = None,
-        audio: Optional[bool] = None, image: Optional[ImageInput] = None, end_image: Optional[ImageInput] = None, negative_prompt: Optional[str] = None,
-        wait: bool = False, timeout: float = 600, request_key: Optional[str] = None, webhook_url: Optional[str] = None, wait_for_slot: bool = False,
+        audio: Optional[bool] = None, tier: Optional[str] = None, image: Optional[ImageInput] = None, end_image: Optional[ImageInput] = None,
+        negative_prompt: Optional[str] = None, wait: bool = False, timeout: float = 600, request_key: Optional[str] = None, webhook_url: Optional[str] = None, wait_for_slot: bool = False,
     ) -> Generation:
-        """Text to video, or image to video from `image` (optionally ending on `end_image`). Returns at once unless wait=True."""
+        """Text to video, or image to video from `image` (optionally ending on `end_image`). Returns at once unless wait=True.
+        `tier` picks a model's quality tier where it has one (Veo 3.1: "Lite", "Fast" or "Quality")."""
         return self._submit({
             "kind": "video", "model": model, "prompt": prompt, "negativePrompt": negative_prompt,
-            "options": self._options(model, {"aspect": aspect, "resolution": resolution, "duration": duration, "audio": audio}),
+            "options": self._options(model, {"aspect": aspect, "resolution": resolution, "duration": duration, "audio": audio, "tier": tier}),
             "imageUrls": [self._ref(image)] if image is not None else [], "endImageUrl": self._ref(end_image) if end_image is not None else None,
             "requestKey": request_key, "webhookUrl": webhook_url,
         }, wait, timeout, wait_for_slot)
@@ -243,7 +244,9 @@ class Client:
     def _ref(self, ref: ImageInput) -> str:
         if isinstance(ref, str) and ref.startswith("https://"):
             return ref
-        if isinstance(ref, str) and ref.startswith("http://") and not self.base_url.startswith("http://"):
+        if isinstance(ref, str) and ref.startswith("http://"):
+            if self.base_url.startswith("http://"):
+                return ref  # a local deployment can fetch plain http
             raise ValueError(f"Only https URLs can be fetched by the service: {ref}")
         if isinstance(ref, bytes):
             return self.upload(ref, mime="image/png" if ref[:8] == b"\x89PNG\r\n\x1a\n" else "image/jpeg" if ref[:3] == b"\xff\xd8\xff" else "image/webp")
